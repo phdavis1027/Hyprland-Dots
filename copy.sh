@@ -16,7 +16,7 @@
 #   - Backup/restore helpers (in scripts/lib_backup.sh).
 #   - App enablement/editor selection (lib_apps.sh).
 #   - Copy phases (lib_copy.sh):
-#       * Part 1: fastfetch/kitty/rofi/swaync (prompted replace).
+#       * Part 1: fastfetch/rofi/swaync (prompted replace).
 #       * Waybar special handling (symlinks, configs/styles restore).
 #       * Part 2: other configs (btop, cava, hypr, etc.) + ghostty/wezterm installs.
 #   - UserConfigs/UserScripts and hypr file restores.
@@ -334,8 +334,7 @@ while true; do
 done
 echo "${OK} You have chosen $resolution resolution." 2>&1 | tee -a "$LOG"
 if [ "$resolution" == "< 1440p" ]; then
-  # kitty font size
-  sed -i 's/font_size 16.0/font_size 14.0/' config/kitty/kitty.conf
+  sed -i 's/font-size = 12/font-size = 10/' config/ghostty/ghostty.config
 
   # hyprlock matters
   if [ -f config/hypr/hyprlock.conf ]; then

@@ -65,8 +65,33 @@ install_terminal_configs() {
   local GHOSTTY_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/ghostty"
   local GHOSTTY_DEST="$GHOSTTY_DIR/config"
   if [ -f "$GHOSTTY_SRC" ]; then
-    mkdir -p "$GHOSTTY_DIR"
-    install -m 0644 "$GHOSTTY_SRC" "$GHOSTTY_DEST" 2>&1 | tee -a "$log"
+    if [ -d "$GHOSTTY_DIR" ]; then
+      while true; do
+        printf "\n${INFO:-[INFO]} Found ${YELLOW:-}ghostty${RESET:-} config in ~/.config/\n"
+        echo -n "${CAT:-[ACTION]} Do you want to replace ${YELLOW:-}ghostty${RESET:-} config? (y/n): "
+        read GHOSTTY_CHOICE
+        case "$GHOSTTY_CHOICE" in
+        [Yy]*)
+          BACKUP_DIR=$(get_backup_dirname)
+          mv "$GHOSTTY_DIR" "$GHOSTTY_DIR-backup-$BACKUP_DIR" 2>&1 | tee -a "$log"
+          echo -e "${NOTE:-[NOTE]} - Backed up ghostty to $GHOSTTY_DIR-backup-$BACKUP_DIR." 2>&1 | tee -a "$log"
+          mkdir -p "$GHOSTTY_DIR"
+          install -m 0644 "$GHOSTTY_SRC" "$GHOSTTY_DEST" 2>&1 | tee -a "$log"
+          echo -e "${OK:-[OK]} - Replaced ghostty with new configuration." 2>&1 | tee -a "$log"
+          break
+          ;;
+        [Nn]*)
+          echo -e "${NOTE:-[NOTE]} - Skipping ${YELLOW:-}ghostty${RESET:-}" 2>&1 | tee -a "$log"
+          break
+          ;;
+        *) echo -e "${WARN:-[WARN]} - Invalid choice. Please enter Y or N." ;;
+        esac
+      done
+    else
+      mkdir -p "$GHOSTTY_DIR"
+      install -m 0644 "$GHOSTTY_SRC" "$GHOSTTY_DEST" 2>&1 | tee -a "$log"
+      echo -e "${OK:-[OK]} - Copy completed for ${YELLOW:-}ghostty${RESET:-}" 2>&1 | tee -a "$log"
+    fi
     if [ -f "$GHOSTTY_DIR/wallust.conf" ]; then
       sed -i -E 's/^(\\s*palette\\s*=\\s*)([0-9]{1,2}):/\\1\\2=/' "$GHOSTTY_DIR/wallust.conf" 2>&1 | tee -a "$log" || true
     fi

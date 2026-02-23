@@ -3,7 +3,7 @@
 
 copy_phase1() {
   local log="$1"
-  local dirs="fastfetch kitty rofi swaync"
+  local dirs="fastfetch rofi swaync"
   for DIR2 in $dirs; do
     local DIRPATH="$HOME/.config/$DIR2"
     if [ -d "$DIRPATH" ]; then
